@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import TodoList from './TodoList';
 import TodoForm from './TodoForm';
@@ -66,24 +67,40 @@ const TodoApp = () => {
   };
 
   const editTodo = async (id, newTitle) => {
-    try {
-      const response = await fetch(`${API_ENDPOINT}/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: newTitle,
-        }),
-      });
+    setTodos((prevTodos) =>
+          prevTodos.map((todo) =>{
+            if(id==todo.id){
+              todo.title=newTitle;
+            }
+            return todo            
+            }) 
+        );
+        console.log(todos)
+    // try {
+    //   const response = await fetch(`${API_ENDPOINT}/?id=${id}`, {
+    //     method: 'PUT',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       title: newTitle,
+    //     }),
+    //   });
 
-      const updatedTodo = await response.json();
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => (todo.id === id ? updatedTodo : todo))
-      );
-    } catch (error) {
-      console.error('Error editing todo:', error);
-    }
+    //   if (response.ok) {
+    //     // Update the local state with the edited task
+    //     console.log(newTitle)
+    //     setTodos((prevTodos) =>
+    //       prevTodos.map((todo) => (todo.id === id ? { ...todo, title: newTitle } : todo))
+    //     );
+    //   } else {
+    //     console.error('Failed to edit todo. Server returned:', response);
+    //   }
+    //   console.log(todos)
+    //   fetchTodos();
+    // } catch (error) {
+    //   console.error('Error editing todo:', error);
+    // }
   };
 
   const deleteTodo = async (id) => {
@@ -98,20 +115,12 @@ const TodoApp = () => {
     }
   };
 
-  const filteredTodos = filterCompleted
-    ? todos.filter((todo) => todo.completed)
-    : todos;
+  const filteredTodos = filterCompleted ? todos.filter((todo) => todo.completed) : todos;
 
   return (
-    <div>
+    <div className="container">
       <h1>Todo App</h1>
       <TodoForm addTodo={addTodo} />
-      <TodoList
-        todos={filteredTodos}
-        toggleComplete={toggleComplete}
-        editTodo={editTodo}
-        deleteTodo={deleteTodo}
-      />
       <div>
         <label>
           Show Completed
@@ -122,6 +131,13 @@ const TodoApp = () => {
           />
         </label>
       </div>
+      <TodoList
+        todos={filteredTodos}
+        toggleComplete={toggleComplete}
+        editTodo={editTodo}
+        deleteTodo={deleteTodo}
+      />
+      
     </div>
   );
 };
